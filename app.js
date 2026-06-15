@@ -3,11 +3,19 @@ const input = document.querySelector("#prompt");
 const messagesEl = document.querySelector("#messages");
 const sendButton = document.querySelector("#send-button");
 const statusEl = document.querySelector("#status");
+const fullscreenToggle = document.querySelector("#fullscreen-toggle");
 
 const history = [];
 
 function setStatus(text) {
   statusEl.textContent = text;
+}
+
+function setChatFullscreen(isFullscreen) {
+  document.body.classList.toggle("chat-fullscreen", isFullscreen);
+  fullscreenToggle.setAttribute("aria-pressed", String(isFullscreen));
+  fullscreenToggle.textContent = isFullscreen ? "Close" : "Full screen";
+  messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
 function escapeHtml(value) {
@@ -48,7 +56,7 @@ function createAvatar(role) {
   if (role === "assistant") {
     avatar.innerHTML = '<img src="/media/COLB_cool.webp" alt="" />';
   } else {
-    avatar.textContent = "C";
+    avatar.innerHTML = '<img src="/media/COLB_sus.webp" alt="" />';
   }
 
   return avatar;
@@ -157,6 +165,16 @@ input.addEventListener("keydown", (event) => {
 
 document.querySelectorAll("[data-example]").forEach((button) => {
   button.addEventListener("click", () => ask(button.dataset.example));
+});
+
+fullscreenToggle.addEventListener("click", () => {
+  setChatFullscreen(!document.body.classList.contains("chat-fullscreen"));
+});
+
+document.addEventListener("keydown", (event) => {
+  if (event.key === "Escape" && document.body.classList.contains("chat-fullscreen")) {
+    setChatFullscreen(false);
+  }
 });
 
 autoresize();
