@@ -1,0 +1,87 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Colb Docs AI Chat</title>
+    <meta
+      name="description"
+      content="AI chat that answers only from Colb documentation."
+    />
+    <link rel="icon" href="/media/LOGO.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="brand-panel" aria-label="Colb">
+        <header class="topbar">
+          <a class="brand" href="/" aria-label="Colb Docs AI">
+            <span class="logo-mark">
+              <img src="/media/LOGO.svg" alt="" />
+            </span>
+            <span>COLB AI</span>
+          </a>
+          <a class="docs-link" href="https://docs.colb.finance/" target="_blank" rel="noreferrer">
+            docs
+          </a>
+        </header>
+
+        <div class="intro">
+          <p class="eyebrow">Docs-only assistant</p>
+          <h1>Ask Colb documentation</h1>
+          <p class="lead">
+            The assistant answers only from official Colb docs. If the docs do not cover it, it says so.
+          </p>
+        </div>
+
+        <div class="mascot-wrap">
+          <img src="/media/COLB_cool.webp" alt="Colb mascot" class="mascot mascot-main" />
+          <img src="/media/COLB_sus.webp" alt="" class="mascot mascot-small" />
+        </div>
+      </section>
+
+      <section class="chat-panel" aria-label="AI chat">
+        <div class="chat-header">
+          <div>
+            <p class="kicker">Colb docs</p>
+            <h2>AI Chat</h2>
+          </div>
+          <div class="status" id="status">ready</div>
+        </div>
+
+        <div class="messages" id="messages" aria-live="polite">
+          <article class="message assistant">
+            <div class="avatar">
+              <img src="/media/COLB_cool.webp" alt="" />
+            </div>
+            <div class="bubble">
+              <p>Ask a question about Colb. I will answer only from the documentation index and show the sources.</p>
+              <div class="chips" aria-label="Example questions">
+                <button type="button" data-example="How do I get started with Colb?">Getting started</button>
+                <button type="button" data-example="What smart contracts does Colb use?">Smart contracts</button>
+                <button type="button" data-example="How can I invest and pay?">Invest and pay</button>
+              </div>
+            </div>
+          </article>
+        </div>
+
+        <form class="composer" id="chat-form">
+          <label class="sr-only" for="prompt">Question</label>
+          <textarea
+            id="prompt"
+            name="prompt"
+            rows="1"
+            maxlength="1200"
+            placeholder="For example: how do I pass onboarding?"
+            autocomplete="off"
+          ></textarea>
+          <button type="submit" id="send-button" aria-label="Send">
+            <span>Ask</span>
+          </button>
+        </form>
+      </section>
+    </main>
+
+    <script src="/app.js" type="module"></script>
+  </body>
+</html>
