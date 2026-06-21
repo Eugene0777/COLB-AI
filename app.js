@@ -4,8 +4,13 @@ const messagesEl = document.querySelector("#messages");
 const sendButton = document.querySelector("#send-button");
 const statusEl = document.querySelector("#status");
 const fullscreenToggle = document.querySelector("#fullscreen-toggle");
+const cspxPriceCard = document.querySelector("#cspx-price-card");
+const cspxPriceValue = document.querySelector("#cspx-price-value");
+const cspxPriceMeta = document.querySelector("#cspx-price-meta");
+const cspxRefresh = document.querySelector("#cspx-refresh");
 
 const history = [];
+let priceController;
 
 function setStatus(text) {
   statusEl.textContent = text;
@@ -110,6 +115,45 @@ function autoresize() {
   input.style.height = `${Math.min(input.scrollHeight, 150)}px`;
 }
 
+function formatUpdatedAt(value) {
+  if (!value) return "BNB oracle";
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "BNB oracle";
+  return `BNB oracle - ${date.toLocaleString("en-US", {
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit"
+  })}`;
+}
+
+async function loadCspxPrice() {
+  if (priceController) priceController.abort();
+  priceController = new AbortController();
+  cspxPriceCard.dataset.state = "loading";
+  cspxPriceValue.textContent = "Loading";
+  cspxPriceMeta.textContent = "BNB oracle";
+
+  try {
+    const response = await fetch("/api/cspx-price", {
+      signal: priceController.signal,
+      headers: { accept: "application/json" }
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || "Price unavailable");
+
+    cspxPriceCard.dataset.state = "ready";
+    cspxPriceValue.textContent = data.priceUsd || `$${data.price}`;
+    cspxPriceMeta.textContent = formatUpdatedAt(data.updatedAt);
+    cspxPriceCard.title = `${data.label} from ${data.source}`;
+  } catch (error) {
+    if (error.name === "AbortError") return;
+    cspxPriceCard.dataset.state = "error";
+    cspxPriceValue.textContent = "Unavailable";
+    cspxPriceMeta.textContent = "Oracle temporarily unavailable";
+  }
+}
+
 async function ask(question) {
   const cleanQuestion = question.trim();
   if (!cleanQuestion) return;
@@ -171,6 +215,8 @@ fullscreenToggle.addEventListener("click", () => {
   setChatFullscreen(!document.body.classList.contains("chat-fullscreen"));
 });
 
+cspxRefresh.addEventListener("click", loadCspxPrice);
+
 document.addEventListener("keydown", (event) => {
   if (event.key === "Escape" && document.body.classList.contains("chat-fullscreen")) {
     setChatFullscreen(false);
@@ -178,3 +224,5 @@ document.addEventListener("keydown", (event) => {
 });
 
 autoresize();
+loadCspxPrice();
+setInterval(loadCspxPrice, 60_000);
